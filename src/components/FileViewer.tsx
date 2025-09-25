@@ -22,6 +22,25 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string>('');
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // Detect mobile device and set initial scale
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Set initial scale based on device
+      if (mobile) {
+        setScale(0.75); // Smaller initial scale for mobile
+      } else {
+        setScale(1);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (file.type === 'txt') {
@@ -58,51 +77,102 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
     }
   };
 
-  const zoomIn = () => setScale((prev) => Math.min(3, prev + 0.25));
-  const zoomOut = () => setScale((prev) => Math.max(0.5, prev - 0.25));
-  const resetZoom = () => setScale(1);
+  // Fine-tuned zoom controls with different increments
+  const getZoomIncrement = () => {
+    if (scale < 0.5) return 0.1;
+    if (scale < 1) return 0.15;
+    if (scale < 2) return 0.25;
+    return 0.5;
+  };
+
+  const zoomIn = () => {
+    const increment = getZoomIncrement();
+    setScale((prev) => Math.min(5, prev + increment));
+  };
+
+  const zoomOut = () => {
+    const increment = getZoomIncrement();
+    setScale((prev) => Math.max(0.25, prev - increment));
+  };
+
+  const resetZoom = () => {
+    setScale(isMobile ? 0.75 : 1);
+  };
+
+  const fitToWidth = () => {
+    const containerWidth = window.innerWidth - (isMobile ? 32 : 96); // Account for padding
+    const contentWidth = isMobile ? 350 : 600; // Approximate content width
+    const optimalScale = Math.min(2, containerWidth / contentWidth);
+    setScale(Math.max(0.25, optimalScale));
+  };
 
   const renderContent = () => {
     if (file.type === 'pdf') {
       return (
         <div className="flex flex-col items-center space-y-4">
-          <Document
-            file={file.file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            className="shadow-lg rounded-lg overflow-hidden"
-          >
-            <Page
-              pageNumber={pageNumber}
-              scale={scale}
-              className="shadow-md"
-            />
-          </Document>
+          <div className="w-full flex justify-center overflow-auto">
+            <Document
+              file={file.file}
+              onLoadSuccess={onDocumentLoadSuccess}
+              className="shadow-lg rounded-lg overflow-hidden"
+            >
+              <Page
+                pageNumber={pageNumber}
+                scale={scale}
+                className="shadow-md max-w-full"
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            </Document>
+          </div>
         </div>
       );
     }
 
     if (file.type === 'image') {
       return (
-        <div className="flex justify-center">
-          <img
-            src={imageUrl}
-            alt={file.file.name}
-            style={{ transform: `scale(${scale})` }}
-            className="max-w-full max-h-full object-contain transition-smooth rounded-lg shadow-lg"
-          />
+        <div className="flex justify-center overflow-auto">
+          <div 
+            className="transition-all duration-300 ease-out"
+            style={{ transform: `scale(${scale})`, transformOrigin: 'center top' }}
+          >
+            <img
+              src={imageUrl}
+              alt={file.file.name}
+              className="max-w-none h-auto rounded-lg shadow-lg"
+              style={{
+                maxWidth: isMobile ? '100vw' : '90vw',
+                maxHeight: isMobile ? '80vh' : '85vh'
+              }}
+            />
+          </div>
         </div>
       );
     }
 
     if (file.type === 'txt') {
+      const baseFontSize = isMobile ? 0.875 : 1; // 14px on mobile, 16px on desktop
+      const fontSize = baseFontSize * scale;
+      
       return (
-        <div className="glass rounded-xl p-6 max-w-4xl mx-auto">
-          <pre
-            className="whitespace-pre-wrap text-foreground font-mono text-sm leading-relaxed"
-            style={{ fontSize: `${scale}rem` }}
+        <div className="w-full max-w-none">
+          <div 
+            className="glass rounded-xl p-4 md:p-6 mx-auto transition-all duration-300"
+            style={{ 
+              maxWidth: isMobile ? '100%' : '90%',
+              margin: '0 auto'
+            }}
           >
-            {fileContent}
-          </pre>
+            <pre
+              className="whitespace-pre-wrap text-foreground font-mono leading-relaxed overflow-auto"
+              style={{ 
+                fontSize: `${fontSize}rem`,
+                lineHeight: isMobile ? '1.4' : '1.6'
+              }}
+            >
+              {fileContent}
+            </pre>
+          </div>
         </div>
       );
     }
@@ -123,7 +193,7 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
     <div className={cn("fixed inset-0 z-50 bg-background/95 backdrop-blur-sm", className)}>
       <div className="h-full flex flex-col">
         {/* Header with controls */}
-        <div className="glass border-b p-4">
+        <div className="glass border-b p-3 md:p-4">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="icon" onClick={onClose}>
@@ -134,32 +204,36 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
               </h1>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2 flex-wrap">
               {/* Search (for text files) */}
-              {file.type === 'txt' && (
+              {file.type === 'txt' && !isMobile && (
                 <div className="flex items-center gap-2">
                   <Search className="h-4 w-4 text-foreground-muted" />
                   <Input
                     placeholder="Search in document..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-48"
+                    className="w-40 md:w-48"
                   />
                 </div>
               )}
 
               {/* Zoom controls */}
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon-sm" onClick={zoomOut}>
+                <Button variant="ghost" size="icon-sm" onClick={zoomOut} title="Zoom Out">
                   <ZoomOut className="h-4 w-4" />
                 </Button>
-                <span className="text-sm text-foreground-muted px-2 min-w-16 text-center">
+                <span 
+                  className="text-sm text-foreground-muted px-2 min-w-16 text-center cursor-pointer hover:text-foreground transition-colors"
+                  onClick={resetZoom}
+                  title="Reset Zoom"
+                >
                   {Math.round(scale * 100)}%
                 </span>
-                <Button variant="ghost" size="icon-sm" onClick={zoomIn}>
+                <Button variant="ghost" size="icon-sm" onClick={zoomIn} title="Zoom In">
                   <ZoomIn className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon-sm" onClick={resetZoom}>
+                <Button variant="ghost" size="icon-sm" onClick={fitToWidth} title="Fit to Width">
                   <RotateCcw className="h-4 w-4" />
                 </Button>
               </div>
@@ -205,8 +279,11 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-7xl mx-auto">
+        <div className="flex-1 overflow-auto p-3 md:p-6">
+          <div className={cn(
+            "mx-auto transition-all duration-300",
+            file.type === 'txt' ? "max-w-none" : "max-w-7xl"
+          )}>
             {renderContent()}
           </div>
         </div>
