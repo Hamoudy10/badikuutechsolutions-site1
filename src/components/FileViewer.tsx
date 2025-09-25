@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Search, X, RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Search, X, RotateCcw, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { FileData } from './FileGrid';
+import { DocumentParser } from './DocumentParser';
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -23,6 +25,7 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
   const [fileContent, setFileContent] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string>('');
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   // Detect mobile device and set initial scale
   useEffect(() => {
@@ -48,6 +51,9 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
       const reader = new FileReader();
       reader.onload = (e) => {
         setFileContent(e.target?.result as string || '');
+      };
+      reader.onerror = () => {
+        setError('Failed to read text file');
       };
       reader.readAsText(file.file);
     } else if (file.type === 'image') {
@@ -107,6 +113,15 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
   };
 
   const renderContent = () => {
+    if (error) {
+      return (
+        <div className="glass rounded-xl p-8 text-center">
+          <p className="text-destructive text-lg mb-2">Error loading document</p>
+          <p className="text-foreground-muted text-sm">{error}</p>
+        </div>
+      );
+    }
+
     if (file.type === 'pdf') {
       return (
         <div className="flex flex-col items-center space-y-4">
@@ -114,7 +129,13 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
             <Document
               file={file.file}
               onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={() => setError('Failed to load PDF')}
               className="shadow-lg rounded-lg overflow-hidden"
+              loading={
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              }
             >
               <Page
                 pageNumber={pageNumber}
@@ -122,6 +143,11 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
                 className="shadow-md max-w-full"
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
+                loading={
+                  <div className="flex items-center justify-center h-96 bg-surface rounded-lg">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  </div>
+                }
               />
             </Document>
           </div>
@@ -144,6 +170,7 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
                 maxWidth: isMobile ? '100vw' : '90vw',
                 maxHeight: isMobile ? '80vh' : '85vh'
               }}
+              onError={() => setError('Failed to load image')}
             />
           </div>
         </div>
@@ -163,26 +190,40 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
               margin: '0 auto'
             }}
           >
-            <pre
-              className="whitespace-pre-wrap text-foreground font-mono leading-relaxed overflow-auto"
-              style={{ 
-                fontSize: `${fontSize}rem`,
-                lineHeight: isMobile ? '1.4' : '1.6'
-              }}
-            >
-              {fileContent}
-            </pre>
+            <ScrollArea className="h-[70vh]">
+              <pre
+                className="whitespace-pre-wrap text-foreground font-mono leading-relaxed"
+                style={{ 
+                  fontSize: `${fontSize}rem`,
+                  lineHeight: isMobile ? '1.4' : '1.6'
+                }}
+              >
+                {fileContent}
+              </pre>
+            </ScrollArea>
           </div>
         </div>
       );
     }
 
+    if (file.type === 'doc' || file.type === 'docx' || file.type === 'ppt' || file.type === 'pptx') {
+      return (
+        <DocumentParser 
+          file={file.file}
+          scale={scale}
+          isMobile={isMobile}
+          onError={setError}
+        />
+      );
+    }
+
     return (
       <div className="glass rounded-xl p-8 text-center">
-        <p className="text-foreground-muted text-lg">
+        <FileText className="h-12 w-12 text-foreground-muted mx-auto mb-4" />
+        <p className="text-foreground-muted text-lg mb-2">
           Preview not available for this file type.
         </p>
-        <p className="text-foreground-subtle text-sm mt-2">
+        <p className="text-foreground-subtle text-sm">
           File: {file.file.name}
         </p>
       </div>
@@ -205,8 +246,8 @@ export const FileViewer: React.FC<FileViewerProps> = ({ file, onClose, className
             </div>
 
             <div className="flex items-center gap-1 md:gap-2 flex-wrap">
-              {/* Search (for text files) */}
-              {file.type === 'txt' && !isMobile && (
+              {/* Search (for text files and parsed documents) */}
+              {(file.type === 'txt' || file.type === 'doc' || file.type === 'docx' || file.type === 'ppt' || file.type === 'pptx') && !isMobile && (
                 <div className="flex items-center gap-2">
                   <Search className="h-4 w-4 text-foreground-muted" />
                   <Input
