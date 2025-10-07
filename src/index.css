@@ -17,21 +17,21 @@
     --foreground-muted: 240 15% 45%;
     --foreground-subtle: 240 10% 65%;
     
-    /* Brand Colors - Beautiful Blue to Purple Gradient */
-    --primary: 240 95% 65%;
-    --primary-light: 245 85% 72%;
-    --primary-dark: 235 85% 58%;
+    /* Brand Colors - Light Blue */
+    --primary: 199 89% 48%;
+    --primary-light: 199 89% 70%;
+    --primary-dark: 199 89% 35%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Elegant Purple */
-    --secondary: 270 75% 70%;
-    --secondary-light: 275 70% 75%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary - Gold */
+    --secondary: 45 100% 51%;
+    --secondary-light: 45 100% 70%;
+    --secondary-foreground: 0 0% 0%;
     
-    /* Accent - Warm Orange */
-    --accent: 25 95% 62%;
-    --accent-light: 30 90% 68%;
-    --accent-foreground: 240 25% 12%;
+    /* Accent - Bright Gold */
+    --accent: 48 96% 53%;
+    --accent-light: 48 96% 70%;
+    --accent-foreground: 0 0% 0%;
     
     /* Neutral System */
     --muted: 240 15% 96%;
