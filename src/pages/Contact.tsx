@@ -88,7 +88,7 @@ const Contact = () => {
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent("Hello, I would like to inquire about your services.");
-    window.open(`https://wa.me/YOUR_PHONE_NUMBER?text=${message}`, "_blank");
+    window.open(`https://wa.me/254742773562?text=${message}`, "_blank");
   };
 
   return (
@@ -182,8 +182,8 @@ const Contact = () => {
                 <p className="text-foreground-muted">
                   Send us an email and we'll respond as soon as possible
                 </p>
-                <a href="mailto:info@badikuutech.com" className="text-primary hover:underline mt-2 block">
-                  info@badikuutech.com
+                <a href="mailto:hamoudybadi@gmail.com" className="text-primary hover:underline mt-2 block">
+                  hamoudybadi@gmail.com
                 </a>
               </CardContent>
             </Card>
@@ -216,8 +216,8 @@ const Contact = () => {
                 <p className="text-foreground-muted">
                   Speak directly with our team
                 </p>
-                <a href="tel:+1234567890" className="text-primary hover:underline mt-2 block">
-                  +123 456 7890
+                <a href="tel:+254742773562" className="text-primary hover:underline mt-2 block">
+                  +254 742 773 562
                 </a>
               </CardContent>
             </Card>

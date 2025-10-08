@@ -62,19 +62,19 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-sm text-foreground-muted">
                 <Mail className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                <a href="mailto:info@badikuutech.com" className="hover:text-primary">
-                  info@badikuutech.com
+                <a href="mailto:hamoudybadi@gmail.com" className="hover:text-primary">
+                  hamoudybadi@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-2 text-sm text-foreground-muted">
                 <Phone className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                <a href="tel:+1234567890" className="hover:text-primary">
-                  +123 456 7890
+                <a href="tel:+254742773562" className="hover:text-primary">
+                  +254 742 773 562
                 </a>
               </li>
               <li className="flex items-start gap-2 text-sm text-foreground-muted">
                 <MapPin className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                <span>Your City, Country</span>
+                <span>Mombasa, Kenya</span>
               </li>
             </ul>
           </div>
