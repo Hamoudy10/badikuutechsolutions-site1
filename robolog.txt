@@ -1,0 +1,50 @@
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : 08 October 2025 14:29:02
+   Source : C:\Users\pc\Desktop\badikuutechsolutions-site1\dist\
+     Dest : C:\Users\pc\Desktop\badikuutechsolutions-site1\
+
+    Files : *.*
+	    
+  Options : *.* /S /E /DCOPY:DA /COPY:DATSO /R:0 /W:0 
+
+------------------------------------------------------------------------------
+
+	                   4	C:\Users\pc\Desktop\badikuutechsolutions-site1\dist\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\.git\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\dist\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\node_modules\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\public\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\src\
+	*EXTRA Dir        -1	C:\Users\pc\Desktop\badikuutechsolutions-site1\supabase\
+	  *EXTRA File 		     353	.env
+	  *EXTRA File 		     277	.gitignore
+	  *EXTRA File 		  197327	bun.lockb
+	  *EXTRA File 		      30	CNAME
+	  *EXTRA File 		     434	components.json
+	  *EXTRA File 		     791	eslint.config.js
+	  *EXTRA File 		  275048	package-lock.json
+	  *EXTRA File 		    3021	package.json
+	  *EXTRA File 		      87	postcss.config.js
+	  *EXTRA File 		    2214	README.md
+	  *EXTRA File 		       0	robolog.txt
+	  *EXTRA File 		    3739	tailwind.config.ts
+	  *EXTRA File 		     682	tsconfig.app.json
+	  *EXTRA File 		     385	tsconfig.json
+	  *EXTRA File 		     503	tsconfig.node.json
+	  *EXTRA File 		     508	vite.config.ts
+	                   2	C:\Users\pc\Desktop\badikuutechsolutions-site1\dist\assets\
+	  *EXTRA File 		  595422	index-irEU2EnK.js
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         2         0         2         0         0         6
+   Files :         6         0         6         0         0        17
+   Bytes :   660.2 k         0   660.2 k         0         0    1.03 m
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+   Ended : 08 October 2025 14:29:02
+
