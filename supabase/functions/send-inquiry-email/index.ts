@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@4.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,24 +25,33 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { name, email, phone, subject, message }: InquiryRequest = await req.json();
 
-    const emailResponse = await resend.emails.send({
-      from: "BadikuuTech <onboarding@resend.dev>",
-      to: ["your-email@example.com"], // Replace with your actual email
-      subject: `New Inquiry: ${subject}`,
-      html: `
-        <h2>New Inquiry from BadikuuTech Website</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, "<br>")}</p>
-      `,
+    const emailResponse = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "BadikuuTech <onboarding@resend.dev>",
+        to: ["your-email@example.com"], // Replace with your actual email
+        subject: `New Inquiry: ${subject}`,
+        html: `
+          <h2>New Inquiry from BadikuuTech Website</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
+          <p><strong>Subject:</strong> ${subject}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message.replace(/\n/g, "<br>")}</p>
+        `,
+      }),
     });
 
-    console.log("Inquiry email sent successfully:", emailResponse);
+    const data = await emailResponse.json();
 
-    return new Response(JSON.stringify(emailResponse), {
+    console.log("Inquiry email sent successfully:", data);
+
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
