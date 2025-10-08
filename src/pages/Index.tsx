@@ -47,7 +47,7 @@ const Index = () => {
                 <FileText className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gradient">Badikuu FileViewer Pro</h1>
+                <h1 className="text-xl font-bold text-gradient">BadikuuTech Solutions</h1>
                 <p className="text-sm text-foreground-muted">Professional Document Viewer</p>
               </div>
             </div>
