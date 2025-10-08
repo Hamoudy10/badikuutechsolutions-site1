@@ -33,7 +33,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "BadikuuTech <onboarding@resend.dev>",
-        to: ["your-email@example.com"], // Replace with your actual email
+        to: ["hamoudybadi@gmail.com"],
         subject: `New Inquiry: ${subject}`,
         html: `
           <h2>New Inquiry from BadikuuTech Website</h2>

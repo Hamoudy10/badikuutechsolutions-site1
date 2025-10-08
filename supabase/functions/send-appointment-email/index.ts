@@ -34,7 +34,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "BadikuuTech <onboarding@resend.dev>",
-        to: ["your-email@example.com"], // Replace with your actual email
+        to: ["hamoudybadi@gmail.com"],
         subject: `New Appointment Request: ${service}`,
         html: `
           <h2>New Appointment Request from BadikuuTech Website</h2>
