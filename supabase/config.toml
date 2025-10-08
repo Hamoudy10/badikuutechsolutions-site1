@@ -1,0 +1,7 @@
+project_id = "pkcgjqdtjmxucszlnszd"
+
+[functions.send-inquiry-email]
+verify_jwt = false
+
+[functions.send-appointment-email]
+verify_jwt = false
